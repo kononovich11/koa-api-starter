@@ -1,6 +1,7 @@
 module.exports = {
   DATABASE_DOCUMENTS: {
     USERS: 'users',
+    WRITER: 'writer',
     TOKENS: 'tokens',
   },
   TOKEN_TYPES: {
