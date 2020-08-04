@@ -1,8 +1,10 @@
 const Joi = require('@hapi/joi');
 const validate = require('middlewares/validate');
 const writerService = require('resources/writer/writer.service');
+const ENUM = ["novel", "poem", "fantasy"];
 
 const schema = Joi.object({
+  _id: Joi.string().required(),
   firstName: Joi.string()
     .min(2)
     .max(15)
@@ -18,35 +20,35 @@ const schema = Joi.object({
   age: Joi.number()
     .messages({
       'string.empty': 'Please, enter age right',
+    }),
+  
+  books: Joi.array().items(
+    Joi.object({
+      _id: Joi.string().required(),
+      title: Joi.string().required(),
+      genre: Joi.string().valid(...ENUM),
     })
+  )
 });
 
 async function validator(ctx, next) {
+  const { firstName, lastName } = ctx.validatedData;
   const existsWriter = await writerService.exists({
-    _id: ctx.params.id
+    firstName,
+    lastName
   });  
-    if(!existsWriter) {
-      ctx.body = 'havent this writer';
-  }
-  console.log(existsWriter);  
+    if(existsWriter) {
+      ctx.body = 'writer already exist';
+    }
   next();
 }
 
 async function handler(ctx) {
   const data = ctx.validatedData;
   console.log(data);  
-  await writerService.update({
-    _id: ctx.params.id}, (doc) => {
-      data.firstName? doc.firstName = data.firstName:doc.firstName;
-      data.lastName? doc.lastName = data.lastName:doc.lastName;
-      data.age? doc.age = data.age:doc.age;
-    return doc;
-  });
+  await writerService.create([data]);
 }
 
 module.exports.register = (router) => {
-  router.put('/:id', validate(schema), validator, handler);
+  router.post('/', validate(schema), validator, handler);
 };
-
-
-
