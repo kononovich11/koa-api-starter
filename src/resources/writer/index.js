@@ -1,12 +1,9 @@
 const Router = require('@koa/router');
 
-require('./writer.handler'); 
-
-
 const router = new Router();
 
 require('./getWriters').register(router);
-require('./get-writer').register(router); 
+require('./get-writer').register(router);
 require('./create-writer').register(router);
 require('./update-writer').register(router);
 require('./delete-writer').register(router);

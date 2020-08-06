@@ -1,21 +1,23 @@
 const Joi = require('@hapi/joi');
 const validate = require('middlewares/validate');
 const writerService = require('resources/writer/writer.service');
-const ENUM = ["novel", "poem", "fantasy"];
+
+const ENUM = ['novel', 'poem', 'fantasy'];
 
 const schema = Joi.object({
-      _id: Joi.string().required(),
-      title: Joi.string().required(),
-      genre: Joi.string().valid(...ENUM),
+  title: Joi.string().required(),
+  genre: Joi.string().valid(...ENUM),
 });
 
 async function handler(ctx) {
-  const data = ctx.validatedData; 
-  console.log(data);
-  await writerService.update({ _id:ctx.params.id}, (doc) => {
-    doc.books.push(data);
-    return doc;
+  const data = ctx.validatedData;
+  await writerService.atomic.update({ _id: ctx.params.id },
+    {
+      $push: {
+        books: { ...data },
+      },
     });
+  ctx.response.body = await writerService.findOne({ _id: ctx.params.id });
 }
 
 module.exports.register = (router) => {

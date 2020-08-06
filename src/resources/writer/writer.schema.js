@@ -2,23 +2,22 @@ const Joi = require('@hapi/joi');
 
 const schema = Joi.object({
   _id: Joi.string(),
-  _id: Joi.string(),
   firstName: Joi.string()
-  .required(),
+    .required(),
   lastName: Joi.string()
-  .required(),
+    .required(),
   age: Joi.number()
-  .required(),  
+    .required(),
   createdOn: Joi.date(),
-  books : [
+  books: [
     {
-    _id: Joi.string()
+      _id: Joi.string()
         .required(),
-    title: Joi.string()
+      title: Joi.string()
         .required(),
-    genre: Joi.string().valid('novel', 'poem')
-    }
-  ]
+      genre: Joi.string().valid('novel', 'poem'),
+    },
+  ],
 });
 
 module.exports = (obj) => schema.validate(obj, { allowUnknown: false });
