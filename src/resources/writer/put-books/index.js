@@ -16,19 +16,21 @@ const schema = Joi.object({
 
 async function handler(ctx) {
   const data = ctx.validatedData;
-  data.books.map((item) => {
-    const itemBook = item;
-    const id = uuidv4();
-    itemBook._id = id;
-    return itemBook;
+  const newBooks = data.books.map((item) => {
+    return {
+      ...item,
+      _id: uuidv4(),
+    };
   });
-  ctx.response.body = data;
+
   await writerService.atomic.update({ _id: ctx.params.id },
     {
       $set: {
-        books: { ...data.books },
+        books: newBooks,
       },
     });
+
+  ctx.response.body = newBooks;
 }
 
 module.exports.register = (router) => {

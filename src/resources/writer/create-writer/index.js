@@ -45,14 +45,22 @@ async function exist(ctx, next) {
 
 async function handler(ctx) {
   const data = ctx.validatedData;
-  data.books.map((item) => {
-    const itemBook = item;
-    const id = uuidv4();
-    itemBook._id = id;
-    return itemBook;
+  const books = data.books.map((item) => {
+    return {
+      ...item,
+      _id: uuidv4(),
+    };
   });
-  ctx.response.body = data;
-  await writerService.create([data]);
+
+  const { firstName, lastName, age } = data;
+  const writer = await writerService.create({
+    firstName,
+    lastName,
+    age,
+    books,
+  });
+
+  ctx.response.body = writer;
 }
 
 module.exports.register = (router) => {

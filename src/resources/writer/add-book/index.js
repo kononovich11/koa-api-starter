@@ -17,7 +17,7 @@ async function handler(ctx) {
   await writerService.atomic.update({ _id: ctx.params.id },
     {
       $push: {
-        books: { ...data },
+        books: data,
       },
     });
   ctx.response.body = await writerService.findOne({ _id: ctx.params.id });

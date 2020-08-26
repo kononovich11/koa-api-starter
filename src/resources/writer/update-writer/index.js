@@ -36,7 +36,7 @@ async function handler(ctx) {
   ctx.response.body = data;
   await writerService.atomic.update({ _id: ctx.params.id },
     {
-      $set: { ...data },
+      $set: data,
     });
 }
 
